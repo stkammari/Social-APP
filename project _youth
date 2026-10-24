@@ -1,0 +1,62 @@
+1. Share quick thoughts
+2. discover interesting people
+3. participate in challenges
+4. interact with friends
+
+
+1. The feed ---> short posts, thoughts, questions, and updates from the people
+2. Daily challenges ---> Giving users to return to the application.
+3. Profiles and connections ---> Users can have profiles, follow others, and eventually message their friends
+
+
+
+Version 1 : A simple social feed
+---> Creating a post and displaying posts from users
+
+1. posts = [] ---> The temporary storage for posts
+2. create post() ---> A function to create post -- username, message(post)
+3. Dictionary -- one post ---> In version 1 we are just storing only 2 fields -- {"username":".....", "message":".....!"}
+4. show_feed() ----> creating a function for showing feed and adding for loop to show post in posts -- visits each post
+                     in the list and prints its username and message. -- Beginning of our feed logic
+
+
+Phase 1 : Making the feed interactive
+Goal here is to let the user to:
+1. Enter their username
+2. Write a post
+3. Having the app validate the post
+4. Show new posts in the feed
+5. Creating multiple posts without restarting the program
+
+
+Phase 2 : Saving posts permanently using SQLite
+---> SQLite is built-in for python
+---> It is like a maintaining a record book, storing all the information
+---> Importing sqlite3
+---> Creating a table if not exists posts (....)
+---> Saving the data (INSERT adds a row to the database. The question marks are placeholders for values,
+     which helps protect against SQL injection. commit() saves the transaction.)
+---> Retrieving the posts
+
+
+Phase 3 : Turning the APP into an API
+---> Will use FastAPI to let other applications communicate with our python backend.
+
+                    Social app
+
+                         FastAPI
+
+                            Python + SQLite
+
+
+
+
+         Front End
+
+            fastAPI - Our API layer
+
+                SQLite - Database
+
+---> Requirement : FastAPI
+---> installing : pip install "fastapi[standard]"
+
