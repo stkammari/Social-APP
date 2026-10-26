@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewpoint" content="width=device-width, initial-scale=1.0">
+    <title>Social APP</title>
+
+    <style>
+        {
+        box-sizing: border-box;
+        }
+
+        body{
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5fa;
+            color: #202033;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5ee;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo{
+            font-size: 26px;
+            font-weight: bold ;
+            color: #6955e8;
+        }
+
+
+        header span {
+            color: #77758a;
+            font-size: 14x;
+        }
+
+        main{
+            max-width: 650px;
+            margin: 35px auto;
+            padding: 0 18px;
+        }
+
+        .welcome {
+            margin-bottom: 24px;
+        }
+
+        .welcome h1 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #77758a;
+        }
+
+        .card {
+            background: white;
+            padding: 27px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 18px #2020330a;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 16px;
+            border: 1px solid #dedeea;
+            border-radius: 10px;
+            font: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button:hover {
+            background: #6955e8;
+        }
+
+        .feed-title {
+            margin: 28px 0 16px;
+            z-index: 1;
+        }
+
+        .post {
+            background: white;
+            padding: 22px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 18px #2020330a;
+        }
+
+        .post-user {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .post-message {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .post-date {
+            color: #89879a;
+            font-size: 12px;
+            margin-top: 16px;
+        }
+
+        #post-form button [type ="submit"] {
+            background: #6955e8;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #post-form button[type="submit"]:hover{
+            background: #5541d2;
+        }
+
+
+        #status {
+            margin-top: 14px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 16px 20px;
+            }
+
+            main {
+                margin-top: 24px;
+            }
+        }
+    </style>
+
+
+</head>
+<body>
+
+<header>
+    <div class='logo'>Social</div>
+    <span> Your Space. Your People</span>
+
+</header>
+
+<main>
+    <section class ='welcome'>
+        <h1>
+            Your world, your voice
+        </h1>
+        <p>
+            Share a thought. Start a conversation
+        </p>
+    </section>
+
+
+    <section class="card">
+        <h2> Create a post</h2>
+
+        <form id="post-form">
+            <label for="username">Username</label>
+            <input
+                id="username"
+                type="text"
+                maxlength="50"
+                placeholder="Choose your username"
+                required
+            >
+            <label for="message">What's on your mind?</label>
+            <textarea
+                id="message"
+                maxlength="200"
+                placeholder="Share something with your community..."
+                required
+            ></textarea>
+
+            <button type="submit">Share post</button>
+
+        </form>
+
+        <p id="status" role="status"></p>
+    </section>
+
+
+    <h2 class="feed-title">Explore the feed</h2>
+
+    <selection id="feed" aria-live="polite">
+        Loading posts...
+    </selection>
+</main>
+
+<footer>
+    Social - built one step at a time.
+</footer>
+
+<script>
+    const form = document.getElementById("post-form");
+    const feed = document.getElementById("feed");
+    const status = document.getElementById("status");
+
+    async function loadFeed() {
+        const feed = document.getElementById("feed");
+
+        feed.textContent = "Loading posts...";
+
+        try {
+            const response = await fetch("/post");
+
+            if (!response.ok) {
+                throw new Error("Could not load posts.");
+            }
+
+            const posts = await response.json();
+
+            feed.replaceChildren();
+            if (posts.length === 0) {
+                feed.textContent = "No posts yet. Be the first to share!";
+                return;
+            }
+
+
+            for (const post of posts) {
+                const card = document.createElement("article");
+                card.className = "post";
+
+                const username = document.createElement("div");
+                username.className = "post-user";
+                username.textContent = "@" + post.username;
+
+                const message = document.createElement("div");
+                message.className = "post-message";
+                message.textContent = post.message;
+
+                const date = document.createElement("div");
+                date.className = "post-date";
+                date.textContent = post.created_at;
+
+                card.append(username, message, date);
+                feed.appendChild(card);
+            }
+        } catch (error) {
+            feed.textContent = "Unable to load posts. Please check the server."
+        }
+    }
+
+
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const username =
+            document.getElementById("username").value.trim();
+
+        const message =
+            document.getElementById("message").value.trim();
+
+        if (!username || !message) {
+            status.textContent = "Please enter a username and message.";
+            return;
+        }
+
+        status.textcontent = "Publishing...";
+
+
+        try {
+            const response = await fetch ("/posts", {
+                method : "POST",
+                headers : {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username,
+                    message: message
+                    }
+                )
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    typeof result.detail === "string"
+                        ? result.detail
+                        : JSON.stringify(result.detail)
+                );
+            }
+
+            status.textcontent = "POST published successfully!";
+            document.getElementById("message").value="";
+
+            await loadFeed();
+
+        } catch (error) {
+            console.error("Post submission failed:", error)
+            status.textContent = "Could not publish" + error.message;
+        }
+    });
+
+    loadFeed();
+</script>
+</body>
+</html>
