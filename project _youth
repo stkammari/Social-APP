@@ -60,3 +60,6 @@ Phase 3 : Turning the APP into an API
 ---> Requirement : FastAPI
 ---> installing : pip install "fastapi[standard]"
 
+
+Phase 4 : Building Visual Frontend for Social App
+Using Html, CSS, javascript to create front end visuals and connect it to the backend code.
