@@ -247,6 +247,48 @@
                 message.className = "post-message";
                 message.textContent = post.message;
 
+                const likeRow = document.createElement(("div"));
+                likeRow.className = "like-row";
+
+                const likeButton = document.createElement(("button"));
+                likeButton.type = "button";
+                likeButton.textContent = "❤️ like"
+                likeButton.className = "like-button"
+
+                const likeCount = document.createElement(("span"));
+                likeCount.className = `${post.likes ?? 0} likes`;
+
+                likeButton.addEventListener("click", async function (){
+                    likeButton.disabled = true;
+
+                    try {
+                        const response = await fetch(
+                            `/posts/${post.id}/like`,
+                            { method : "POST"}
+                        );
+
+                        const result = await response.json();
+
+                        if (!response.ok) {
+                            const errorMessage =
+                                typeof result.detail === "string"
+                                    ? result.detail
+                                    : JSON.stringify(result.detail)
+
+                            throw new Error(errorMessage || "Could not like post")
+                        }
+                        await loadFeed();
+
+                    } catch (error) {
+                        console.error(error);
+                        alert(error.message);
+                        likeButton.disabled = false;
+                    }
+                });
+
+                likeRow.append(likeButton, likeCount);
+
+
                 const date = document.createElement("div");
                 date.className = "post-date";
                 date.textContent = post.created_at;
